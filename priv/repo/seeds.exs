@@ -110,6 +110,39 @@ alias EcoService.EcoService.Schedule
     }
   )
 
+  Repo.insert!(
+    %Community{
+      name: "Aspiration",
+      location_area_zone: "Aspiration",
+      schedule_id: friday.id
+    }
+  )
+
+  Repo.insert!(
+    %Community{
+      name: "New Creation",
+      location_area_zone: "New Creation",
+      schedule_id: friday.id
+    }
+  )
+
+  Repo.insert!(
+    %Community{
+      name: "Mytreye",
+      location_area_zone: "Mytreye",
+      schedule_id: friday.id
+    }
+  )
+
+  Repo.insert!(
+    %Community{
+      name: "Surrender",
+      location_area_zone: "Surrender ",
+      schedule_id: friday.id
+    }
+  )
+
+
   list_of_numbers = 1..100
 
   for number <- list_of_numbers do
