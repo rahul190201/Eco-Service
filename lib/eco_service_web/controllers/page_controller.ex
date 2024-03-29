@@ -39,4 +39,25 @@ defmodule EcoServiceWeb.PageController do
       |> text("Insertion Failed")
     end
   end
+
+
+  def get_schedules_for_a_day(conn, _params) do
+    day = EcoServiceContext.find_current_day()
+
+    schedules =
+    case day do
+      "Monday" -> List.first(EcoServiceContext.monday_schedules())
+      "Tuesday" -> List.first(EcoServiceContext.tuesday_schedules())
+      "Wednesday" -> List.first(EcoServiceContext.wednesday_schedules())
+      "Thursday" -> List.first(EcoServiceContext.thursday_schedules())
+      "Friday" -> List.first(EcoServiceContext.friday_schedules())
+      "Saturday" -> List.first(EcoServiceContext.saturday_schedules())
+      "Sunday" -> nil
+    end
+
+    schedules = Enum.map(schedules.communities, fn community -> %{community_name: community.name, community_id: community.id, community_location_area_zone: community.location_area_zone, day_of_week: day } end )
+
+    json(conn, schedules )
+
+  end
 end

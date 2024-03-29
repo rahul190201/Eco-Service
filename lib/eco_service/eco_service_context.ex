@@ -207,4 +207,17 @@ defmodule EcoService.EcoServiceContext do
   def convert_to_integer(string) do
     if string != "", do: String.to_integer(string), else: nil
   end
+
+  def find_current_day() do
+    day_number = Date.day_of_week(Date.utc_today)
+    case day_number do
+      1 -> "Moday"
+      2 -> "Tuesday"
+      3 -> "Wednesday"
+      4 -> "Thursday"
+      5 -> "Friday"
+      6 -> "Saturday"
+      7 -> "Sundat"
+    end
+  end
 end
