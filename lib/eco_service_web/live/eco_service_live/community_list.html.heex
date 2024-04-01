@@ -1,46 +1,56 @@
 <h1 class="font-bold text-2xl text-center pb-10">List of communities</h1>
 
+<.simple_form :let={form} for={%{}} as={:community} phx-submit="search_communities">
+  <.input field={form[:name]} label="Community name" type="text" />
+  <.button value="search">Search</.button>
+</.simple_form>
+
 <.table id="community" rows={@communities}>
-  <:col :let={community} label="Community Name"><span></span>  
-  <.link href={~p"/communities/#{community.id}/community_details"}>
-   <u class="text-blue-400"><%= community.name%></u>
-  </.link> 
+  <:col :let={community} label="Community Name">
+    <.link href={~p"/communities/#{community.id}/community_details"}>
+      <u class="text-blue-400"><%= community.name %></u>
+    </.link>
   </:col>
-  <:col :let={community} label="Location Area Zone"> <%= community.location_area_zone%> </:col>
-  <:col :let={community} label="Delete"> 
-      <.link phx-click="delete" phx-value-id={community.id} > <span class="text-blue-500"><Heroicons.trash class="w-6 h-6" /></span> </.link>    
+  <:col :let={community} label="Location Area Zone"><%= community.location_area_zone %></:col>
+  <:col :let={community} label="Edit">
+    <.link href={~p"/communities/#{community.id}/edit"}>
+      <span class="text-blue-500"><Heroicons.pencil class="w-6 h-6" /></span>
+    </.link>
   </:col>
-  <:col :let={community} label="Edit"> 
-      <.link href={~p"/communities/#{community.id}/edit"} > <span class="text-blue-500"><Heroicons.pencil class="w-6 h-6" /></span> </.link>    
+  <:col :let={community} label="Delete">
+    <.link phx-click="delete" phx-value-id={community.id}>
+      <span class="text-blue-500"><Heroicons.trash class="w-6 h-6" /></span>
+    </.link>
   </:col>
 </.table>
 
-<div class="flex flex-cols justify-end gap-6 pt-6"> 
-  <%= if @offset != 0 do %>  
-  <.button phx-click="first" ><p>First</p></.button>
-  <.button phx-click="prev" ><p>Prev</p></.button>
-  <% end%>
+<div class="flex flex-cols justify-end gap-6 pt-6">
+  <%= if @offset != 0 do %>
+    <.button phx-click="first">
+      <p>First</p>
+    </.button>
+    <.button phx-click="prev">
+      <p>Prev</p>
+    </.button>
+  <% end %>
 
   <%= if @count_of_all_records - @offset > @limit do %>
-    <.button phx-click="next" ><p>Next</p></.button>
-    <.button phx-click="last" ><p>Last</p></.button>
+    <.button phx-click="next">
+      <p>Next</p>
+    </.button>
+    <.button phx-click="last">
+      <p>Last</p>
+    </.button>
   <% end %>
-</div>  
+</div>
 
-
-
-<.modal
-  :if={@live_action in [:edit]} 
-  id = "Edit"
-  show
-  on_cancel={JS.navigate(~p"/communities")}
->
-<.live_component
-  module={EcoServiceWeb.EcoServiceLive.EditCommunityComponent}
-  id={:edit}
-  community_id={@community_id}
-  title={@page_title}
-  live_action={@live_action}
-  navigate={~p"/communities"}
-/>
+<.modal :if={@live_action in [:edit]} id="Edit" show on_cancel={JS.navigate(~p"/communities")}>
+  <.live_component
+    module={EcoServiceWeb.EcoServiceLive.EditCommunityComponent}
+    id={:edit}
+    community_id={@community_id}
+    title={@page_title}
+    live_action={@live_action}
+    navigate={~p"/communities"}
+  />
 </.modal>
