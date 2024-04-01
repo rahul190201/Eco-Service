@@ -9,6 +9,7 @@ defmodule EcoService.EcoServiceContext do
     Community
     |> limit(^params.limit)
     |> offset(^params.offset)
+    |> order_by(asc: :name)
     |> Repo.all()
   end
 
@@ -222,7 +223,7 @@ defmodule EcoService.EcoServiceContext do
     day_number = Date.day_of_week(Date.utc_today())
 
     case day_number do
-      1 -> "Moday"
+      1 -> "Monday"
       2 -> "Tuesday"
       3 -> "Wednesday"
       4 -> "Thursday"
