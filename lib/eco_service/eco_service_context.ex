@@ -1,5 +1,4 @@
 defmodule EcoService.EcoServiceContext do
-
   import Ecto.Query
   alias EcoService.EcoService.Waste
   alias EcoService.Repo
@@ -49,9 +48,9 @@ defmodule EcoService.EcoServiceContext do
   def get_waste_by_community_id(community_id, params) do
     query =
       from w in Waste,
-      where: w.community_id == ^community_id,
-      limit: ^params.limit,
-      offset: ^params.offset
+        where: w.community_id == ^community_id,
+        limit: ^params.limit,
+        offset: ^params.offset
 
     query
     |> Repo.all()
@@ -77,10 +76,11 @@ defmodule EcoService.EcoServiceContext do
   end
 
   def get_last_one_month_waste() do
-    last_month = Date.utc_today |> Date.add(-30)
+    last_month = Date.utc_today() |> Date.add(-30)
+
     query =
       from w in Waste,
-      where: w.date >= ^last_month
+        where: w.date >= ^last_month
 
     query
     |> Repo.all()
@@ -96,44 +96,53 @@ defmodule EcoService.EcoServiceContext do
     mixed_bags = Enum.map(wastes, fn waste -> waste.mixed_bags end)
     Enum.sum(Enum.reject(mixed_bags, fn bag -> bag == nil end))
   end
+
   def total_paper_bags(wastes) do
     paper_bags = Enum.map(wastes, fn waste -> waste.paper_bags end)
     Enum.sum(Enum.reject(paper_bags, fn bag -> bag == nil end))
   end
+
   def total_plastic_bags(wastes) do
     plastic_bags = Enum.map(wastes, fn waste -> waste.plastic_bags end)
     Enum.sum(Enum.reject(plastic_bags, fn bag -> bag == nil end))
   end
+
   def total_sanitory_bags(wastes) do
     sanitory_bags = Enum.map(wastes, fn waste -> waste.sanitory_bags end)
     Enum.sum(Enum.reject(sanitory_bags, fn bag -> bag == nil end))
   end
+
   def total_seg_lf_bags(wastes) do
     seg_lf_bags = Enum.map(wastes, fn waste -> waste.seg_lf_bags end)
     Enum.sum(Enum.reject(seg_lf_bags, fn bag -> bag == nil end))
   end
 
   def top5_comm_details() do
-
     all_wastes = get_all_waste()
 
     # calculate the sum of all wastes that is produced by a community
     sum_of_all_waste_with_community_id =
-    Enum.map(all_wastes, fn waste ->
-      %{
-        community_id: waste.community.id,
-        waste:
-              [waste.glass_bags, waste.mixed_bags, waste.paper_bags, waste.plastic_bags, waste.sanitory_bags, waste.seg_lf_bags]
-              |> Enum.reject( fn waste -> waste == nil end)
-              |> Enum.sum()
-      }
-    end)
+      Enum.map(all_wastes, fn waste ->
+        %{
+          community_id: waste.community.id,
+          waste:
+            [
+              waste.glass_bags,
+              waste.mixed_bags,
+              waste.paper_bags,
+              waste.plastic_bags,
+              waste.sanitory_bags,
+              waste.seg_lf_bags
+            ]
+            |> Enum.reject(fn waste -> waste == nil end)
+            |> Enum.sum()
+        }
+      end)
 
     # Sorting the communities by waste count and taking the top 5
     sum_of_all_waste_with_community_id
-    |> Enum.sort_by(&(&1.waste), :desc)
+    |> Enum.sort_by(& &1.waste, :desc)
     |> Enum.take(5)
-
   end
 
   # Schedules
@@ -154,53 +163,54 @@ defmodule EcoService.EcoServiceContext do
   def monday_schedules() do
     get_all_schedules()
     |> Enum.map(fn schedule -> if schedule.day_of_week == "Monday", do: schedule end)
-    |> Enum.reject(fn schedule-> schedule == nil end)
+    |> Enum.reject(fn schedule -> schedule == nil end)
   end
 
   def tuesday_schedules() do
     get_all_schedules()
     |> Enum.map(fn schedule -> if schedule.day_of_week == "Tuesday", do: schedule end)
-    |> Enum.reject(fn schedule-> schedule == nil end)
+    |> Enum.reject(fn schedule -> schedule == nil end)
   end
 
   def wednesday_schedules() do
     get_all_schedules()
     |> Enum.map(fn schedule -> if schedule.day_of_week == "Wednesday", do: schedule end)
-    |> Enum.reject(fn schedule-> schedule == nil end)
+    |> Enum.reject(fn schedule -> schedule == nil end)
   end
 
   def thursday_schedules() do
     get_all_schedules()
     |> Enum.map(fn schedule -> if schedule.day_of_week == "Thursday", do: schedule end)
-    |> Enum.reject(fn schedule-> schedule == nil end)
+    |> Enum.reject(fn schedule -> schedule == nil end)
   end
 
   def friday_schedules() do
     get_all_schedules()
     |> Enum.map(fn schedule -> if schedule.day_of_week == "Friday", do: schedule end)
-    |> Enum.reject(fn schedule-> schedule == nil end)
+    |> Enum.reject(fn schedule -> schedule == nil end)
   end
 
   def saturday_schedules() do
     get_all_schedules()
     |> Enum.map(fn schedule -> if schedule.day_of_week == "Saturday", do: schedule end)
-    |> Enum.reject(fn schedule-> schedule == nil end)
+    |> Enum.reject(fn schedule -> schedule == nil end)
   end
 
   def update_schedule_id_in_community(%Community{} = community, params) do
-    params = %{"schedule_id" =>  params}
+    params = %{"schedule_id" => params}
+
     community
-     |> Community.update_community_changeset(params)
-     |> Repo.update()
+    |> Community.update_community_changeset(params)
+    |> Repo.update()
   end
 
   #  Date formation: From dd-mm-yy to yy-mm-dd and adding 20 before year(for example adding 20 before year 16, 17.).
   def convert_to_ecto_date(date) do
-   [dd, mm, yyyy] = String.split(date, "/")
-   #  Adding 20 for a year.
+    [dd, mm, yyyy] = String.split(date, "/")
+    #  Adding 20 for a year.
     date = "#{dd}-#{mm}-20#{yyyy}"
     [dd, mm, yyyy] = String.split(date, "-")
-   # converting from "dd-mm-yyyy" into ~D[yyyy-mm-dd] format
+    # converting from "dd-mm-yyyy" into ~D[yyyy-mm-dd] format
     Date.from_iso8601!("#{yyyy}-#{mm}-#{dd}")
   end
 
@@ -209,7 +219,8 @@ defmodule EcoService.EcoServiceContext do
   end
 
   def find_current_day() do
-    day_number = Date.day_of_week(Date.utc_today)
+    day_number = Date.day_of_week(Date.utc_today())
+
     case day_number do
       1 -> "Moday"
       2 -> "Tuesday"
@@ -219,5 +230,15 @@ defmodule EcoService.EcoServiceContext do
       6 -> "Saturday"
       7 -> "Sundat"
     end
+  end
+
+  def search_communities(params) do
+    query =
+      from(p in Community,
+        where: ilike(p.name, ^"#{params["name"]}%"),
+        order_by: fragment("lower(name)")
+      )
+
+    Repo.all(query)
   end
 end
