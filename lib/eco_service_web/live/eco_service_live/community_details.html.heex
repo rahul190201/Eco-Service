@@ -1,12 +1,23 @@
-  <h1 class="font-bold text-2xl text-center pb-10">Community Details</h1>
+<h1 class="font-bold text-2xl text-center pb-10">Community Details</h1>
 
-<div class="flex flex-cols justify-between">
-  <h1 class="font-bold text-lg text-left"><%= @community_detail.name %></h1>
-  
+<div class="flex justify-between">
+<div>
+  <span class="font-bold pr-4">Name:</span>  <h1 class="text-lg text-left "><%= @community_detail.name %></h1>
+  <span class="font-bold pr-4">Location Area Zone:</span><h1 class=" text-lg text-left "><%= @community_detail.location_area_zone %></h1>
+</div>  
   <.link href={~p"/communities/#{@community_id}/add_waste"}>
     <.button>Add Waste</.button>
   </.link>
 </div>
+
+<div class="pt-20">
+  <h1 class="font-bold text-xl text-center pb-12 ">Last one month data</h1> 
+  <canvas id="my-chart" phx-hook="WasteOfACommunity" data-community_waste_bags={@community_waste_bags}></canvas>
+
+</div>
+
+<h1 class="font-bold text-xl text-center pt-10">Day-Wise waste details</h1>
+
 
 <.table id="waste" rows={@waste_details} >
 
@@ -36,11 +47,6 @@
   <.button phx-click="next"> <p class="">Next</p></.button>
   <.button phx-click="last" ><p class="">Last</p></.button>
   <% end %>
-</div>
-
-<div class="pt-20">
-  <h1 class="font-bold text-2xl text-center pb-10">Last one month data</h1> 
-  <canvas id="my-chart" phx-hook="WasteOfACommunity" data-community_waste_bags={@community_waste_bags}></canvas>
 </div>
 
 <.modal
