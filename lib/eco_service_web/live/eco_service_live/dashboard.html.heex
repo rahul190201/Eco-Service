@@ -1,5 +1,5 @@
 <div class="pb-6">
-  <h1 class="text-center font-bold  text-2xl pb-10">Last one month data</h1> 
+  <h1 class="text-center font-bold  text-2xl pb-10">Last one month data from all communities</h1> 
   <canvas id="my-chart" phx-hook="AllWaste" data-waste_bags_of_all_communities={@waste_bags_of_all_communities}></canvas>
 </div>
 
@@ -10,7 +10,7 @@
 
   <%= if @type_of_chart == "Total waste" do %>
     <div class="pt-6">
-      <h1 class="text-center font-bold pb-10 text-2xl">Total waste of top 5 communities</h1> 
+      <h1 class="text-center font-bold pb-10 text-2xl">Top 5 communities based on total waste</h1> 
       <canvas id="total-waste" phx-hook="TopFiveWaste" data-highest_count_of_waste_produced_by_communities={@highest_count_of_waste_produced_by_communities} data-top_5_community_produce_waste={@top_5_community_produce_waste}></canvas>
     </div>
   <% else %>

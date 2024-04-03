@@ -22,23 +22,30 @@ alias EcoService.EcoServiceContext
   comments
   ] ->
 
- community =  Repo.insert!(
-   %Community{
-    name: name,
-    location_area_zone: location_area_zone
-   })
+    community_list = Enum.map(EcoServiceContext.search_communities(%{"name" => name}), fn community -> community.name end)
+
+    community =
+    if (name in community_list) == false do
+      Repo.insert!(
+      %Community{
+        name: name,
+        location_area_zone: location_area_zone
+      })
+    else
+      List.first(EcoServiceContext.search_communities(%{"name" => name}))
+    end
 
    Repo.insert!(
     %Waste{
-     date: EcoServiceContext.convert_to_ecto_date(date),
-     glass_bags: EcoServiceContext.convert_to_integer(glass_bags),
-     mixed_bags: EcoServiceContext.convert_to_integer(mixed_bags),
-     plastic_bags: EcoServiceContext.convert_to_integer(plastic_bags),
-     paper_bags: EcoServiceContext.convert_to_integer(paper_bags),
-     seg_lf_bags: EcoServiceContext.convert_to_integer(seg_lf_bags),
-     sanitory_bags: EcoServiceContext.convert_to_integer(sanitory_bags),
-     comments: comments,
-     community_id: community.id
+    date: EcoServiceContext.convert_to_ecto_date(date),
+    glass_bags: EcoServiceContext.convert_to_integer(glass_bags),
+    mixed_bags: EcoServiceContext.convert_to_integer(mixed_bags),
+    plastic_bags: EcoServiceContext.convert_to_integer(plastic_bags),
+    paper_bags: EcoServiceContext.convert_to_integer(paper_bags),
+    seg_lf_bags: EcoServiceContext.convert_to_integer(seg_lf_bags),
+    sanitory_bags: EcoServiceContext.convert_to_integer(sanitory_bags),
+    comments: comments,
+    community_id: community.id
     })
-end
-)
+  end
+  )
