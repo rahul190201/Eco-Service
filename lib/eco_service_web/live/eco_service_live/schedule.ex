@@ -7,6 +7,7 @@ defmodule EcoServiceWeb.EcoServiceLive.Schedule do
     socket
     |> assign(:schedules_for_a_date, nil)
     |> assign(:date, nil)
+    |> assign(:string_date, nil)
     }
   end
 
@@ -14,6 +15,8 @@ defmodule EcoServiceWeb.EcoServiceLive.Schedule do
      schedules_for_a_date = EcoServiceContext.get_schedules_for_date(params["date"])
 
      date = EcoServiceContext.format_string_date(params["date"])
+
+     string_date = EcoServiceContext.convert_string_date_to_calender_iso_date(params["date"])
 
      if schedules_for_a_date ==  [] do
         {:noreply,
@@ -25,6 +28,7 @@ defmodule EcoServiceWeb.EcoServiceLive.Schedule do
       socket
       |> assign(:schedules_for_a_date, schedules_for_a_date)
       |> assign(:date, date)
+      |> assign(:string_date, string_date)
       }
     end
   end

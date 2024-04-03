@@ -7,6 +7,12 @@ defmodule EcoService.Repo.Migrations.AlterWaste do
       add :seg_lf_bags, :integer
       remove :kg_of_sef_lf, :decimal
       add :kg_of_seg_lf, :decimal
+      modify :glass_bags, :decimal
+      modify :mixed_bags, :decimal
+      modify :paper_bags, :decimal
+      modify :plastic_bags, :decimal
+      modify :sanitory_bags, :decimal
+      modify :seg_lf_bags, :decimal
     end
   end
 end

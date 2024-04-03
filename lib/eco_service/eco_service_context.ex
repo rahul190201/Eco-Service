@@ -5,6 +5,7 @@ defmodule EcoService.EcoServiceContext do
   alias EcoService.EcoService.Community
   alias EcoService.EcoService.Schedule
 
+
   def fetch_all_communities(params) do
     Community
     |> limit(^params.limit)
@@ -170,7 +171,7 @@ defmodule EcoService.EcoServiceContext do
 
     community
     |> Community.update_community_changeset(params)
-    |> Repo.update()
+    |> Repo.update!()
   end
 
   #  Date formation: From dd-mm-yy to yy-mm-dd and adding 20 before year(for example adding 20 before year 16, 17.).
@@ -188,6 +189,14 @@ defmodule EcoService.EcoServiceContext do
   def format_string_date(string_date) do
     [yyyy, mm, dd] = String.split(string_date, "-")
     "#{dd}-#{mm}-#{yyyy}"
+  end
+
+  def convert_string_date_to_ecto_date(string_date) do
+    Date.from_iso8601!(string_date)
+  end
+
+  def convert_string_date_to_calender_iso_date(date) do
+    Calendar.strftime(convert_string_date_to_ecto_date(date), "%a, %B %d %Y")
   end
 
   def format_date(date) do

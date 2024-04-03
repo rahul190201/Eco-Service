@@ -6,7 +6,7 @@ defmodule EcoServiceWeb.EcoServiceLive.EditWasteComponent do
     ~H"""
       <div>
           <h1 class="text-center font-bold text-2xl">Edit Schedule</h1>
-          <p class="inline-block pt-4 text-xl "><%= @day %></p>
+          <p class="inline-block pt-4 text-xl "><%= EcoServiceContext.format_date(@date) %></p>
 
           <.table id="community" rows={@communities}>
              <:col :let={community} label="Communty Name"> <%= community.name %></:col>
@@ -41,12 +41,12 @@ defmodule EcoServiceWeb.EcoServiceLive.EditWasteComponent do
 
     communities = Enum.map(schedules, fn schedule -> schedule.communities end)
 
-    day = Enum.map(schedules, fn schedule -> schedule.date end)
+    date = Enum.map(schedules, fn schedule -> schedule.date end)
 
     {:ok,
     socket
     |> assign(:communities, List.first(communities))
-    |> assign(:day, List.first(day))
+    |> assign(:date, List.first(date))
     |> assign(:add_community, false)
     |> assign(assigns)
     }
