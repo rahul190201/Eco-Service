@@ -8,7 +8,7 @@ defmodule EcoService.EcoService.Schedule do
   @foreign_key_type :binary_id
 
   schema "schedules" do
-    field :day_of_week, :string
+    field :date, :date
 
     has_many :communities, Community
     timestamps()
@@ -17,7 +17,7 @@ defmodule EcoService.EcoService.Schedule do
   @doc false
   def changeset(schedule, attrs) do
     schedule
-    |> cast(attrs, [:day_of_week])
-    |> validate_required([:day_of_week])
+    |> cast(attrs, [:date])
+    |> validate_required([:date])
   end
 end

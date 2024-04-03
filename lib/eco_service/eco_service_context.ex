@@ -148,8 +148,12 @@ defmodule EcoService.EcoServiceContext do
 
   # Schedules
 
-  def get_all_schedules() do
-    Schedule
+  def get_schedules_for_date(date) do
+    query =
+      from d in Schedule,
+      where: d.date == ^date
+
+    query
     |> Repo.all()
     |> Repo.preload(:communities)
   end
@@ -159,42 +163,6 @@ defmodule EcoService.EcoServiceContext do
     |> where(id: ^schedule_id)
     |> Repo.all()
     |> Repo.preload(:communities)
-  end
-
-  def monday_schedules() do
-    get_all_schedules()
-    |> Enum.map(fn schedule -> if schedule.day_of_week == "Monday", do: schedule end)
-    |> Enum.reject(fn schedule -> schedule == nil end)
-  end
-
-  def tuesday_schedules() do
-    get_all_schedules()
-    |> Enum.map(fn schedule -> if schedule.day_of_week == "Tuesday", do: schedule end)
-    |> Enum.reject(fn schedule -> schedule == nil end)
-  end
-
-  def wednesday_schedules() do
-    get_all_schedules()
-    |> Enum.map(fn schedule -> if schedule.day_of_week == "Wednesday", do: schedule end)
-    |> Enum.reject(fn schedule -> schedule == nil end)
-  end
-
-  def thursday_schedules() do
-    get_all_schedules()
-    |> Enum.map(fn schedule -> if schedule.day_of_week == "Thursday", do: schedule end)
-    |> Enum.reject(fn schedule -> schedule == nil end)
-  end
-
-  def friday_schedules() do
-    get_all_schedules()
-    |> Enum.map(fn schedule -> if schedule.day_of_week == "Friday", do: schedule end)
-    |> Enum.reject(fn schedule -> schedule == nil end)
-  end
-
-  def saturday_schedules() do
-    get_all_schedules()
-    |> Enum.map(fn schedule -> if schedule.day_of_week == "Saturday", do: schedule end)
-    |> Enum.reject(fn schedule -> schedule == nil end)
   end
 
   def update_schedule_id_in_community(%Community{} = community, params) do
@@ -215,12 +183,25 @@ defmodule EcoService.EcoServiceContext do
     Date.from_iso8601!("#{yyyy}-#{mm}-#{dd}")
   end
 
+  # Input: "2024-03-29"
+  # Output: "29-03-3024"
+  def format_string_date(string_date) do
+    [yyyy, mm, dd] = String.split(string_date, "-")
+    "#{dd}-#{mm}-#{yyyy}"
+  end
+
+  def format_date(date) do
+    string_date = Date.to_string(date)
+    [yyyy, mm, dd] = String.split(string_date, "-")
+    "#{dd}-#{mm}-#{yyyy}"
+
+  end
   def convert_to_integer(string) do
     if string != "", do: String.to_integer(string), else: nil
   end
 
   def find_current_day() do
-    day_number = Date.day_of_week(Date.utc_today())
+    day_number = Date.date(Date.utc_today())
 
     case day_number do
       1 -> "Monday"

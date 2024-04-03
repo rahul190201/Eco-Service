@@ -41,7 +41,7 @@ defmodule EcoServiceWeb.EcoServiceLive.EditWasteComponent do
 
     communities = Enum.map(schedules, fn schedule -> schedule.communities end)
 
-    day = Enum.map(schedules, fn schedule -> schedule.day_of_week end)
+    day = Enum.map(schedules, fn schedule -> schedule.date end)
 
     {:ok,
     socket
@@ -86,7 +86,6 @@ defmodule EcoServiceWeb.EcoServiceLive.EditWasteComponent do
   end
 
   def handle_event("remove_community", params, socket) do
-    IO.inspect(socket.assigns.communities, label: "Commnities")
     community = EcoServiceContext.get_community_by_id(params["id"])
 
     update_schedule = EcoServiceContext.update_schedule_id_in_community(community,  "")

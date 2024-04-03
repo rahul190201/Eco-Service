@@ -3,23 +3,30 @@ defmodule EcoServiceWeb.EcoServiceLive.Schedule do
 
   alias EcoService.EcoServiceContext
   def mount(_params, _session, socket) do
-
-  monday_schedule = EcoServiceContext.monday_schedules()
-  tuesday_schedule = EcoServiceContext.tuesday_schedules()
-  wednesday_schedule = EcoServiceContext.wednesday_schedules()
-  thursday_schedule = EcoServiceContext.thursday_schedules()
-  friday_schedule = EcoServiceContext.friday_schedules()
-  saturday_schedule = EcoServiceContext.saturday_schedules()
-
    {:ok,
     socket
-    |> assign(:monday_schedule,  monday_schedule)
-    |> assign(:tuesday_schedule, tuesday_schedule)
-    |> assign(:wednesday_schedule, wednesday_schedule)
-    |> assign(:thursday_schedule, thursday_schedule)
-    |> assign(:friday_schedule, friday_schedule)
-    |> assign(:saturday_schedule, saturday_schedule)
+    |> assign(:schedules_for_a_date, nil)
+    |> assign(:date, nil)
     }
+  end
+
+  def handle_event("date-change", params, socket) do
+     schedules_for_a_date = EcoServiceContext.get_schedules_for_date(params["date"])
+
+     date = EcoServiceContext.format_string_date(params["date"])
+
+     if schedules_for_a_date ==  [] do
+        {:noreply,
+        socket
+        |> assign(:schedules_for_a_date, nil)
+        }
+    else
+      {:noreply,
+      socket
+      |> assign(:schedules_for_a_date, schedules_for_a_date)
+      |> assign(:date, date)
+      }
+    end
   end
 
   def handle_params(params, _uri, socket) do

@@ -21,7 +21,7 @@
 
 <.table id="waste" rows={@waste_details} >
 
-  <:col :let={waste_detail} label="Date"> <%=  waste_detail.date %>   </:col> 
+  <:col :let={waste_detail} label="Date"> <%=  EcoServiceContext.format_date(waste_detail.date) %>   </:col> 
   <:col :let={waste_detail} label="No. of Glass Bags"> <%=  waste_detail.glass_bags %>  </:col> 
   <:col :let={waste_detail} label="No. of Mixed Bags"> <%=  waste_detail.mixed_bags %>  </:col> 
   <:col :let={waste_detail} label="No. of Paper Bags"> <%=  waste_detail.paper_bags %>  </:col> 
