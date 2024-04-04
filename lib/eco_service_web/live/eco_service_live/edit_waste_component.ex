@@ -74,13 +74,13 @@ defmodule EcoServiceWeb.EcoServiceLive.EditWasteComponent do
 
       {:noreply,
       socket
-      |> push_redirect(to: ~p"/schedules")
+      |> push_redirect(to: ~p"/schedules/#{socket.assigns.schedule_id}")
       |> put_flash(:info, "Successfully Added Community")
       }
     {:error, _} ->
       {:noreply,
       socket
-      |> push_redirect(to: ~p"/schedules")
+      |> push_redirect(to: ~p"/schedules/#{socket.assigns.schedule_id}")
       |> put_flash(:error, "Couldn't Update Community")
      }
     end
@@ -101,7 +101,7 @@ defmodule EcoServiceWeb.EcoServiceLive.EditWasteComponent do
       {:error, _} ->
         {:noreply,
         socket
-        |> push_redirect(to: ~p"/schedules")
+        |> push_redirect(to: ~p"/schedules/#{socket.assigns.schedule_id}")
         |> put_flash(:error, "Couldn't Update Community")
        }
       end
