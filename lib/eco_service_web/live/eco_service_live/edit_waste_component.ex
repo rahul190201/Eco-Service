@@ -56,6 +56,7 @@ defmodule EcoServiceWeb.EcoServiceLive.EditWasteComponent do
     options =
     EcoServiceContext.fetch_all_communities()
     |> Enum.map(fn community -> {"#{community.name}", community.id} end)
+    |> Enum.sort_by(& &1, :asc)
 
     {:noreply,
     socket
