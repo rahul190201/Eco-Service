@@ -486,7 +486,7 @@ defmodule EcoServiceWeb.CoreComponents do
 
   def short_input(assigns) do
     ~H"""
-    <div phx-feedback-for={@name}>
+    <div phx-feedback-for={@name} >
       <.short_label for={@id}><%= @label %></.short_label>
       <input
         type={@type}
@@ -517,7 +517,7 @@ defmodule EcoServiceWeb.CoreComponents do
 
   def label(assigns) do
     ~H"""
-    <label for={@for} class="block text-sm font-semibold leading-6 text-zinc-800">
+    <label for={@for} class="pt-4  block text-sm font-semibold leading-6 text-zinc-800">
       <%= render_slot(@inner_block) %>
     </label>
     """
