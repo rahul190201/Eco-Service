@@ -12,7 +12,7 @@ defmodule EcoServiceWeb.PageController do
   def get_all_communities(conn, _params)do
     all_communities = EcoServiceContext.fetch_all_communities()
 
-    all_communities = Enum.map(all_communities, fn community -> %{community_id: community.id, community_name: community.name, community_location: community.location_area_zone} end)
+    all_communities = Enum.map(all_communities, fn community -> %{community_id: community.id, community_name: community.name, community_location: community.location_area_zone, latitude: community.lat, longtitude: community.long, gate_photo_file_name: community.gate_photo_file_name} end)
 
     json(conn, all_communities )
   end

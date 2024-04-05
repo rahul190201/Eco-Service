@@ -6,6 +6,10 @@ defmodule EcoService.Repo.Migrations.CreateCommunities do
       add :id, :binary_id, primary_key: true
       add :name, :string
       add :location_area_zone, :string
+      add :lat, :decimal
+      add :long, :decimal
+      add :gate_photo_file_name, :string
+
       add :schedule_id, references(:schedules, type: :binary_id, on_delete: :nothing)
 
       timestamps()

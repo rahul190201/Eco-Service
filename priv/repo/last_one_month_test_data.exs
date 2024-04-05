@@ -5,7 +5,7 @@ alias EcoService.EcoService.Community
 alias EcoService.EcoServiceContext
 
 :code.priv_dir(:eco_service)
-|> Path.join("repo/test_record.csv")
+|> Path.join("repo/last_one_month_test_date.csv.csv")
 |> File.read!()
 |> CSV.parse_string()
 |> Enum.each(fn

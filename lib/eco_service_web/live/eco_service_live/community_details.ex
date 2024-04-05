@@ -39,6 +39,13 @@ defmodule EcoServiceWeb.EcoServiceLive.CommunityDetails do
     }
   end
 
+
+  def handle_event("open-maps", _params, socket) do
+    url = "https://www.google.com/maps?q=#{12.002881376949352},#{79.8142647471478}"
+    {:noreply, socket}
+  end
+
+
   def handle_event("prev", _params, socket) do
     pag_params = %{limit: socket.assigns.limit, offset: socket.assigns.offset-5}
 
