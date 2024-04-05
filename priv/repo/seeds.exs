@@ -19,94 +19,43 @@ alias EcoService.EcoService.Schedule
 
 # for number <- list_of_numbers do
 
-  monday =
+  demo_date =
   Repo.insert!(
     %Schedule{
-      day_of_week: "Monday",
-    }
-  )
-  tuesday =
-  Repo.insert!(
-    %Schedule{
-      day_of_week: "Tuesday",
+      date: ~D[2024-04-02],
     }
   )
 
-  wednesday =
-  Repo.insert!(
-    %Schedule{
-      day_of_week: "Wednesday",
-    }
-  )
 
-  thursday =
+  demo_date_1 =
   Repo.insert!(
     %Schedule{
-      day_of_week: "Thursday",
-    }
-  )
-
-  friday =
-  Repo.insert!(
-    %Schedule{
-      day_of_week: "Friday",
-    }
-  )
-
-  saturday =
-  Repo.insert!(
-    %Schedule{
-      day_of_week: "Saturday",
+      date: ~D[2024-05-02],
     }
   )
 
 
   Repo.insert!(
     %Community{
-      name: "Eco Service 1",
-      location_area_zone: "Auroshilpam 1",
-      schedule_id: monday.id
+      name: "Surrender",
+      location_area_zone: "Surrender ",
+      schedule_id: demo_date.id
     }
   )
 
   Repo.insert!(
     %Community{
-      name: "Eco Service 2",
-      location_area_zone: "Auroshilpam 2",
-      schedule_id: monday.id
+      name: "New Creation",
+      location_area_zone: "New Creation ",
+      schedule_id: demo_date.id
     }
   )
 
   Repo.insert!(
     %Community{
-      name: "Purnam",
-      location_area_zone: "Auroville",
-      schedule_id: monday.id
-    }
-  )
-
-
-  Repo.insert!(
-    %Community{
-      name: "Eco ",
-      location_area_zone: "Auroshilpam 5",
-      schedule_id: tuesday.id
-    }
-  )
-
-  Repo.insert!(
-    %Community{
-      name: "Ecoooo",
-      location_area_zone: "Auroshilp",
-      schedule_id: tuesday.id
-    }
-  )
-
-  Repo.insert!(
-    %Community{
-      name: "talam",
-      location_area_zone: "sacred grooves",
-      schedule_id: wednesday.id
+      name: "Sacred Grooves",
+      location_area_zone: "Sacred Grooves",
+      schedule_id: demo_date.id
     }
   )
 
@@ -114,31 +63,16 @@ alias EcoService.EcoService.Schedule
     %Community{
       name: "Aspiration",
       location_area_zone: "Aspiration",
-      schedule_id: friday.id
+      schedule_id: demo_date_1.id
     }
   )
 
-  Repo.insert!(
-    %Community{
-      name: "New Creation",
-      location_area_zone: "New Creation",
-      schedule_id: friday.id
-    }
-  )
 
   Repo.insert!(
     %Community{
-      name: "Mytreye",
-      location_area_zone: "Mytreye",
-      schedule_id: friday.id
-    }
-  )
-
-  Repo.insert!(
-    %Community{
-      name: "Surrender",
-      location_area_zone: "Surrender ",
-      schedule_id: friday.id
+      name: "Sadhana forest",
+      location_area_zone: "Sadhana forest",
+      schedule_id: demo_date_1.id
     }
   )
 

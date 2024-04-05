@@ -19,20 +19,21 @@ defmodule EcoServiceWeb.EcoServiceLive.Dashboard do
     ]
 
     # Total waste of top 5 communiteis
-    top_5_community_details = EcoServiceContext.top5_comm_details()
+
+    top_5_community_and_waste = EcoServiceContext.top_5_community_and_waste()
 
     highest_count_of_waste_produced_by_communities =
-    top_5_community_details
+    top_5_community_and_waste
     |> Enum.map(fn waste -> waste.waste end )
 
     top_5_community_produce_waste =
-    top_5_community_details
+    top_5_community_and_waste
     |> Enum.map(fn details -> EcoServiceContext.get_community_by_id(details.community_id).name end )
 
     # catagory wise waste of top 5 communities
 
     waste_details =
-    top_5_community_details
+    top_5_community_and_waste
     |> Enum.map(fn top_community_detail -> EcoServiceContext.get_waste_by_community_id(top_community_detail.community_id) end)
 
     top_communities_glass_bags =

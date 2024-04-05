@@ -6,7 +6,7 @@ defmodule EcoServiceWeb.EcoServiceLive.EditWasteComponent do
     ~H"""
       <div>
           <h1 class="text-center font-bold text-2xl">Edit Schedule</h1>
-          <p class="inline-block pt-4 text-xl "><%= @day %></p>
+          <p class="inline-block pt-4 text-xl "><%= EcoServiceContext.format_date(@date) %></p>
 
           <.table id="community" rows={@communities}>
              <:col :let={community} label="Communty Name"> <%= community.name %></:col>
@@ -41,12 +41,12 @@ defmodule EcoServiceWeb.EcoServiceLive.EditWasteComponent do
 
     communities = Enum.map(schedules, fn schedule -> schedule.communities end)
 
-    day = Enum.map(schedules, fn schedule -> schedule.day_of_week end)
+    date = Enum.map(schedules, fn schedule -> schedule.date end)
 
     {:ok,
     socket
     |> assign(:communities, List.first(communities))
-    |> assign(:day, List.first(day))
+    |> assign(:date, List.first(date))
     |> assign(:add_community, false)
     |> assign(assigns)
     }
@@ -56,6 +56,7 @@ defmodule EcoServiceWeb.EcoServiceLive.EditWasteComponent do
     options =
     EcoServiceContext.fetch_all_communities()
     |> Enum.map(fn community -> {"#{community.name}", community.id} end)
+    |> Enum.sort_by(& &1, :asc)
 
     {:noreply,
     socket
@@ -73,20 +74,19 @@ defmodule EcoServiceWeb.EcoServiceLive.EditWasteComponent do
 
       {:noreply,
       socket
-      |> push_redirect(to: ~p"/schedules")
+      |> push_redirect(to: ~p"/schedules/#{socket.assigns.schedule_id}")
       |> put_flash(:info, "Successfully Added Community")
       }
     {:error, _} ->
       {:noreply,
       socket
-      |> push_redirect(to: ~p"/schedules")
+      |> push_redirect(to: ~p"/schedules/#{socket.assigns.schedule_id}")
       |> put_flash(:error, "Couldn't Update Community")
      }
     end
   end
 
   def handle_event("remove_community", params, socket) do
-    IO.inspect(socket.assigns.communities, label: "Commnities")
     community = EcoServiceContext.get_community_by_id(params["id"])
 
     update_schedule = EcoServiceContext.update_schedule_id_in_community(community,  "")
@@ -101,7 +101,7 @@ defmodule EcoServiceWeb.EcoServiceLive.EditWasteComponent do
       {:error, _} ->
         {:noreply,
         socket
-        |> push_redirect(to: ~p"/schedules")
+        |> push_redirect(to: ~p"/schedules/#{socket.assigns.schedule_id}")
         |> put_flash(:error, "Couldn't Update Community")
        }
       end

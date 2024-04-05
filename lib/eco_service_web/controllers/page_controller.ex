@@ -55,7 +55,7 @@ defmodule EcoServiceWeb.PageController do
       "Sunday" -> nil
     end
 
-    schedules = Enum.map(schedules.communities, fn community -> %{community_name: community.name, community_id: community.id, community_location_area_zone: community.location_area_zone, day_of_week: day } end )
+    schedules = Enum.map(schedules.communities, fn community -> %{community_name: community.name, community_id: community.id, community_location_area_zone: community.location_area_zone, date: day } end )
 
     json(conn, schedules )
 
