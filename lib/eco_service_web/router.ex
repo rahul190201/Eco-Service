@@ -34,6 +34,7 @@ defmodule EcoServiceWeb.Router do
     get "/list_of_communities", PageController, :get_all_communities
     post "/add_waste", PageController, :add_waste
     get "/schedule_details", PageController, :get_schedules_for_todate
+    post "/add_schedules", PageController, :insert_schedules
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

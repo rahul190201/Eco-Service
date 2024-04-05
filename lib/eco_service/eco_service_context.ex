@@ -192,7 +192,7 @@ defmodule EcoService.EcoServiceContext do
 
     community
     |> Community.update_community_changeset(params)
-    |> Repo.update!()
+    |> Repo.update()
   end
 
   #  Date formation: From dd-mm-yy to yy-mm-dd and adding 20 before year(for example adding 20 before year 16, 17.).
@@ -238,5 +238,11 @@ defmodule EcoService.EcoServiceContext do
       )
 
     Repo.all(query)
+  end
+
+  def insert_schedule(params) do
+      %Schedule{}
+      |> Schedule.changeset(params)
+      |> Repo.insert!()
   end
 end

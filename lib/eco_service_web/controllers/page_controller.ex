@@ -19,9 +19,7 @@ defmodule EcoServiceWeb.PageController do
 
   def add_waste(conn, params) do
 
-    date_string = String.slice(params["date"], 3, 10)
-    date = Date.from_iso8601!(date_string)
-
+    date = EcoServiceContext.convert_string_date_to_ecto_date(params["date"])
     params =  Map.replace(params, "date", date)
 
     insert_waste = EcoServiceContext.insert_waste(params) |> IO.inspect(label: "Insert Waste")
@@ -49,5 +47,28 @@ defmodule EcoServiceWeb.PageController do
     schedules = Enum.map(schedules.communities, fn community -> %{community_name: community.name, community_id: community.id, community_location_area_zone: community.location_area_zone, date: date } end )
 
     json(conn, schedules)
+  end
+
+  def insert_schedules(conn, params) do
+    date = EcoServiceContext.convert_string_date_to_ecto_date(params["date"])
+    params =  Map.replace(params, "date", date)
+
+    community = EcoServiceContext.get_community_by_id(params["community_id"])
+
+    schedule = EcoServiceContext.insert_schedule(params)
+    update_schedule = EcoServiceContext.update_schedule_id_in_community(community, schedule.id)
+
+    case update_schedule do
+
+      {:ok, _} ->
+      conn
+      |> put_status(:created)
+      |> text("Data Inserted Successfully")
+
+      {:error, _} ->
+      conn
+      |> put_status(:internal_server_error)
+      |> text("Insertion Failed")
+    end
   end
 end
