@@ -332,7 +332,6 @@ defmodule EcoServiceWeb.CoreComponents do
                                    pattern placeholder readonly required rows size step)
   slot :inner_block
 
-
   def modified_input(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
     assigns
     |> assign(field: nil, id: assigns.id || field.id)
@@ -486,7 +485,7 @@ defmodule EcoServiceWeb.CoreComponents do
 
   def short_input(assigns) do
     ~H"""
-    <div phx-feedback-for={@name} >
+    <div phx-feedback-for={@name}>
       <.short_label for={@id}><%= @label %></.short_label>
       <input
         type={@type}
@@ -506,8 +505,6 @@ defmodule EcoServiceWeb.CoreComponents do
     </div>
     """
   end
-
-
 
   @doc """
   Renders a label.

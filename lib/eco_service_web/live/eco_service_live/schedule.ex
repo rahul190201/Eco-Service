@@ -2,52 +2,47 @@ defmodule EcoServiceWeb.EcoServiceLive.Schedule do
   use EcoServiceWeb, :live_view
 
   alias EcoService.EcoServiceContext
+
   def mount(params, _session, socket) do
-    if params["schedule_id"] == "nil"   do
-    {:ok,
-    socket
-    |> assign(:schedules_for_a_date, nil)
-    |> assign(:date, nil)
-    |> assign(:string_date, nil)
-    }
+    if params["schedule_id"] == "nil" do
+      {:ok,
+       socket
+       |> assign(:schedules_for_a_date, nil)
+       |> assign(:date, nil)
+       |> assign(:string_date, nil)}
     else
-      schedules_for_a_date =
-      EcoServiceContext.get_schedule_by_id(params["schedule_id"])
+      schedules_for_a_date = EcoServiceContext.get_schedule_by_id(params["schedule_id"])
 
-      date = Enum.map(schedules_for_a_date, fn schedule -> schedule.date end)
-      |> List.first()
-      |> Date.to_iso8601()
+      date =
+        Enum.map(schedules_for_a_date, fn schedule -> schedule.date end)
+        |> List.first()
+        |> Date.to_iso8601()
 
-    {:ok,
-      socket
-      |> assign(:schedules_for_a_date, schedules_for_a_date)
-      |> assign(:date, date)
-      |> assign(:string_date, nil)
-    }
-
+      {:ok,
+       socket
+       |> assign(:schedules_for_a_date, schedules_for_a_date)
+       |> assign(:date, date)
+       |> assign(:string_date, nil)}
     end
   end
 
   def handle_event("date-change", params, socket) do
-     schedules_for_a_date = EcoServiceContext.get_schedules_for_date(params["date"])
+    schedules_for_a_date = EcoServiceContext.get_schedules_for_date(params["date"])
 
-     date = EcoServiceContext.format_string_date(params["date"])
+    date = EcoServiceContext.format_string_date(params["date"])
 
-     string_date = EcoServiceContext.convert_string_date_to_calender_iso_date(params["date"])
+    string_date = EcoServiceContext.convert_string_date_to_calender_iso_date(params["date"])
 
-
-     if schedules_for_a_date ==  [] do
-        {:noreply,
-        socket
-        |> assign(:schedules_for_a_date, nil)
-        }
+    if schedules_for_a_date == [] do
+      {:noreply,
+       socket
+       |> assign(:schedules_for_a_date, nil)}
     else
       {:noreply,
-      socket
-      |> assign(:schedules_for_a_date, schedules_for_a_date)
-      |> assign(:date, date)
-      |> assign(:string_date, string_date)
-      }
+       socket
+       |> assign(:schedules_for_a_date, schedules_for_a_date)
+       |> assign(:date, date)
+       |> assign(:string_date, string_date)}
     end
   end
 

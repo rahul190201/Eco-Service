@@ -5,7 +5,6 @@ defmodule EcoService.EcoServiceContext do
   alias EcoService.EcoService.Community
   alias EcoService.EcoService.Schedule
 
-
   def fetch_all_communities(params) do
     Community
     |> limit(^params.limit)
@@ -92,37 +91,37 @@ defmodule EcoService.EcoServiceContext do
   def total_glass_bags(wastes) do
     Enum.map(wastes, fn waste -> waste.glass_bags end)
     |> Enum.reject(fn bag -> is_nil(bag) end)
-    |> Enum.reduce(0, &(Decimal.add(&1, &2)))
+    |> Enum.reduce(0, &Decimal.add(&1, &2))
   end
 
   def total_mixed_bags(wastes) do
     Enum.map(wastes, fn waste -> waste.mixed_bags end)
     |> Enum.reject(fn bag -> bag == nil end)
-    |> Enum.reduce(0, &(Decimal.add(&1, &2)))
+    |> Enum.reduce(0, &Decimal.add(&1, &2))
   end
 
   def total_paper_bags(wastes) do
     Enum.map(wastes, fn waste -> waste.paper_bags end)
     |> Enum.reject(fn bag -> bag == nil end)
-    |> Enum.reduce(0, &(Decimal.add(&1, &2)))
+    |> Enum.reduce(0, &Decimal.add(&1, &2))
   end
 
   def total_plastic_bags(wastes) do
     Enum.map(wastes, fn waste -> waste.plastic_bags end)
     |> Enum.reject(fn bag -> bag == nil end)
-    |> Enum.reduce(0, &(Decimal.add(&1, &2)))
+    |> Enum.reduce(0, &Decimal.add(&1, &2))
   end
 
   def total_sanitory_bags(wastes) do
     Enum.map(wastes, fn waste -> waste.sanitory_bags end)
     |> Enum.reject(fn bag -> bag == nil end)
-    |> Enum.reduce(0, &(Decimal.add(&1, &2)))
+    |> Enum.reduce(0, &Decimal.add(&1, &2))
   end
 
   def total_seg_lf_bags(wastes) do
     Enum.map(wastes, fn waste -> waste.seg_lf_bags end)
     |> Enum.reject(fn bag -> bag == nil end)
-    |> Enum.reduce(0, &(Decimal.add(&1, &2)))
+    |> Enum.reduce(0, &Decimal.add(&1, &2))
   end
 
   def top5_comm_details() do
@@ -142,7 +141,7 @@ defmodule EcoService.EcoServiceContext do
               waste.seg_lf_bags
             ]
             |> Enum.reject(fn waste -> waste == nil end)
-            |> Enum.reduce(0, &(Decimal.add(&1, &2)))
+            |> Enum.reduce(0, &Decimal.add(&1, &2))
         }
       end)
 
@@ -152,20 +151,23 @@ defmodule EcoService.EcoServiceContext do
     |> Enum.take(5)
   end
 
-
   def top_5_community_and_waste() do
     top_5_community_details = top5_comm_details()
 
     group_by_community =
-    Enum.group_by(top_5_community_details, fn detail -> detail.community_id end)
+      Enum.group_by(top_5_community_details, fn detail -> detail.community_id end)
 
-    Enum.map(group_by_community,
-    fn({key, values}) ->
-       %{community_id: key,
-         waste:
+    Enum.map(
+      group_by_community,
+      fn {key, values} ->
+        %{
+          community_id: key,
+          waste:
             Enum.map(values, fn value -> value.wastes end)
-            |> Enum.reduce(0, &(Decimal.add(&1, &2)))}
-    end)
+            |> Enum.reduce(0, &Decimal.add(&1, &2))
+        }
+      end
+    )
   end
 
   # Schedules
@@ -173,7 +175,7 @@ defmodule EcoService.EcoServiceContext do
   def get_schedules_for_date(date) do
     query =
       from d in Schedule,
-      where: d.date == ^date
+        where: d.date == ^date
 
     query
     |> Repo.all()
@@ -192,7 +194,7 @@ defmodule EcoService.EcoServiceContext do
 
     community
     |> Community.update_community_changeset(params)
-    |> Repo.update!()
+    |> Repo.update()
   end
 
   #  Date formation: From dd-mm-yy to yy-mm-dd and adding 20 before year(for example adding 20 before year 16, 17.).
@@ -224,8 +226,8 @@ defmodule EcoService.EcoServiceContext do
     string_date = Date.to_string(date)
     [yyyy, mm, dd] = String.split(string_date, "-")
     "#{dd}-#{mm}-#{yyyy}"
-
   end
+
   def convert_to_integer(string) do
     if string != "", do: String.to_integer(string), else: nil
   end
@@ -238,5 +240,11 @@ defmodule EcoService.EcoServiceContext do
       )
 
     Repo.all(query)
+  end
+
+  def insert_schedule(params) do
+    %Schedule{}
+    |> Schedule.changeset(params)
+    |> Repo.insert!()
   end
 end
