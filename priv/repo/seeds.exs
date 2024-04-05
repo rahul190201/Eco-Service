@@ -22,18 +22,16 @@ alias EcoService.EcoService.Schedule
   demo_date =
   Repo.insert!(
     %Schedule{
-      date: ~D[2024-04-02],
+      date: Date.utc_today(),
     }
   )
-
 
   demo_date_1 =
   Repo.insert!(
     %Schedule{
-      date: ~D[2024-05-02],
+      date: Date.utc_today(),
     }
   )
-
 
   Repo.insert!(
     %Community{

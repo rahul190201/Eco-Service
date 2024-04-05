@@ -230,20 +230,6 @@ defmodule EcoService.EcoServiceContext do
     if string != "", do: String.to_integer(string), else: nil
   end
 
-  def find_current_day() do
-    day_number = Date.date(Date.utc_today())
-
-    case day_number do
-      1 -> "Monday"
-      2 -> "Tuesday"
-      3 -> "Wednesday"
-      4 -> "Thursday"
-      5 -> "Friday"
-      6 -> "Saturday"
-      7 -> "Sundat"
-    end
-  end
-
   def search_communities(params) do
     query =
       from(p in Community,
