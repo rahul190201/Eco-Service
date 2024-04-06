@@ -40,9 +40,20 @@ defmodule EcoServiceWeb.EcoServiceLive.CommunityDetails do
   end
 
 
-  def handle_event("open-maps", _params, socket) do
-    url = "https://www.google.com/maps?q=#{12.002881376949352},#{79.8142647471478}"
-    {:noreply, socket}
+
+
+  def handle_event("open-maps", params, socket) do
+    community_name = params["community-name"] |> IO.inspect(label: "comm name")
+    lat = params["lat"] |> IO.inspect(label: "lat")
+    long = params["long"] |> IO.inspect(label: "long")
+
+
+    url = "https://www.google.com/maps/place/#{community_name}/@#{lat},#{long},17z/data=!4m14!1m7!3m6!1s0x3a5366965fbc2a23:0x5396cc2d51ee65b6!2s#{community_name}!8m2!3d#{lat}!4d#{long}!16s%2Fg%2F11gdkzth66!3m5!1s0x3a5366965fbc2a23:0x5396cc2d51ee65b6!8m2!3d#{lat}!4d#{long}!16s%2Fg%2F11gdkzth66?entry=ttu"
+
+    {:noreply,
+    socket
+    |> redirect(external: url)
+    }
   end
 
 
