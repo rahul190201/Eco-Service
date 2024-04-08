@@ -28,7 +28,7 @@ alias EcoService.EcoServiceContext
     if (name in community_list) == false do
       Repo.insert!(
       %Community{
-        name: name,
+        name: String.trim(name),
         location_area_zone: location_area_zone
       })
     else
