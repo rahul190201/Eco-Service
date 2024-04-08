@@ -24,7 +24,6 @@ defmodule EcoServiceWeb.Router do
     live "/communities/:id/add_waste", EcoServiceLive.CommunityDetails, :add_waste
     live "/schedules/:schedule_id", EcoServiceLive.Schedule, :index
     live "/schedules/:schedule_id/edit_schedule", EcoServiceLive.Schedule, :edit_schedule
-
   end
 
   # Other scopes may use custom stacks.

@@ -16,6 +16,5 @@ defmodule EcoService.Repo.Migrations.CreateCommunities do
     end
 
     create index(:communities, [:schedule_id])
-
   end
 end
