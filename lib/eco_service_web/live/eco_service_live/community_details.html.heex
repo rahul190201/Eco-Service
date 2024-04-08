@@ -1,9 +1,7 @@
 <h1 class="font-bold text-2xl text-center pb-10">Community Details</h1>
 
-<% IO.inspect(@community_detail, label: "community_detail") %>
 <.button phx-click="open-maps" phx-value-community-name={@community_detail.name} phx-value-lat={@community_detail.lat}  phx-value-long={@community_detail.long} >Open map</.button>
 
- 
 
 <div class="flex justify-between">
 <div>
