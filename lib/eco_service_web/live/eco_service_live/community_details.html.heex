@@ -1,15 +1,46 @@
-<h1 class="font-bold text-2xl text-center pb-10">Community Details</h1>
+<h1 class="font-bold text-2xl text-center pb-10 pt-10">Community Details</h1>
 
-<.button
+<div>
+  <span class="font-bold pr-4">Name:</span>
+  <h1 class="text-lg text-left "><%= @community_detail.name %></h1>
+  <span class="font-bold pr-4">Location Area Zone:</span>
+  <h1 class=" text-lg text-left "><%= @community_detail.location_area_zone %></h1>
+</div>
+
+<p class="font-bold pr-4 py-2">Open Map:</p>
+<button
   phx-click="open-maps"
   phx-value-community-name={@community_detail.name}
   phx-value-lat={@community_detail.lat}
   phx-value-long={@community_detail.long}
 >
-  Open map
-</.button>
+  <p class="text-blue-600">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      class="w-10 h-10"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+      />
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
+      />
+    </svg>
+  </p>
+</button>
+
 <section class="py-10">
   <%= if @community_detail.gate_photo_file_name==nil do %>
+    <h2 class="font-bold text-xl text-center pt-10 pb-6">Add Front Gate Photo</h2>
+
     <form id="upload-form" phx-submit="image-upload" phx-change="validate">
       <.live_file_input upload={@uploads.gate_photo_file_name} />
       <.button type="submit">Upload</.button>
@@ -32,24 +63,14 @@
       <p class="alert alert-danger"><%= error_to_string(err) %></p>
     <% end %>
   <% else %>
+    <h2 class="font-bold text-xl text-center pt-10 pb-6">Front Gate Photo</h2>
+
     <img src={EcoService.EcoServiceContext.get_signed_url(@community_detail.gate_photo_file_name)} />
     <button phx-click="remove-photo" class="text-red-600 hover:text-red-900">
       Remove
     </button>
   <% end %>
 </section>
-
-<div class="flex justify-between">
-  <div>
-    <span class="font-bold pr-4">Name:</span>
-    <h1 class="text-lg text-left "><%= @community_detail.name %></h1>
-    <span class="font-bold pr-4">Location Area Zone:</span>
-    <h1 class=" text-lg text-left "><%= @community_detail.location_area_zone %></h1>
-  </div>
-  <.link href={~p"/communities/#{@community_id}/add_waste"}>
-    <.button>Add Waste</.button>
-  </.link>
-</div>
 
 <div class="pt-20">
   <h1 class="font-bold text-xl text-center pb-12 ">Last one month data</h1>
@@ -61,8 +82,12 @@
   </canvas>
 </div>
 
-<h1 class="font-bold text-xl text-center pt-10">Day-Wise waste details</h1>
-
+<div class="flex justify-between pt-10">
+  <h1 class="font-bold text-xl">Day-Wise waste details</h1>
+  <.link href={~p"/communities/#{@community_id}/add_waste"}>
+    <.button>Add Waste</.button>
+  </.link>
+</div>
 <.table id="waste" rows={@waste_details}>
   <:col :let={waste_detail} label="Date">
     <%= EcoServiceContext.format_date(waste_detail.date) %>
