@@ -5,6 +5,8 @@ defmodule EcoService.EcoServiceContext do
   alias EcoService.EcoService.Community
   alias EcoService.EcoService.Schedule
 
+  @link_expires_in 60 * 10
+
   def fetch_all_communities(params) do
     Community
     |> limit(^params.limit)
@@ -246,5 +248,28 @@ defmodule EcoService.EcoServiceContext do
     %Schedule{}
     |> Schedule.changeset(params)
     |> Repo.insert!()
+  end
+
+  def get_signed_url(image_url) do
+    config = ExAws.Config.new(:s3, Application.get_all_env(:ex_aws))
+    s3_key = image_url
+    s3_bucket = "ecoservice"
+
+    {:ok, url} =
+      ExAws.S3.presigned_url(config, :get, s3_bucket, s3_key, expires_in: @link_expires_in)
+
+    url
+  end
+
+  def add_gate_photo_file_name(community_detail, image_url) do
+    community_detail
+    |> Ecto.Changeset.change(gate_photo_file_name: image_url)
+    |> Repo.update()
+  end
+
+  def remove_community_gate_photo(community_detail) do
+    community_detail
+    |> Ecto.Changeset.change(gate_photo_file_name: nil)
+    |> Repo.update()
   end
 end

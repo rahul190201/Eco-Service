@@ -51,19 +51,33 @@ defmodule EcoServiceWeb.PageController do
   def get_schedules_for_todate(conn, _params) do
     todate_schedules = EcoServiceContext.get_schedules_for_date(Date.utc_today()) == []
 
-      case todate_schedules do
-        true ->
-          schedule =
-            Repo.insert!(%Schedule{
-              date: Date.utc_today()
-            })
-          json(conn, schedule.id)
-        false ->
-          todate_schedule = List.first(EcoServiceContext.get_schedules_for_date(Date.utc_today()))
-          schedule_details = Enum.map(todate_schedule.communities, fn community -> %{community_name: community.name, location_area_zone: community.location_area_zone, lat: community.lat, long: community.long, gate_photo_file_name: community.gate_photo_file_name, community_id: community.id, date: todate_schedule.date} end)
+    case todate_schedules do
+      true ->
+        schedule =
+          Repo.insert!(%Schedule{
+            date: Date.utc_today()
+          })
 
-          json(conn, %{schedule_id: todate_schedule.id, communities: schedule_details})
-        end
+        json(conn, schedule.id)
+
+      false ->
+        todate_schedule = List.first(EcoServiceContext.get_schedules_for_date(Date.utc_today()))
+
+        schedule_details =
+          Enum.map(todate_schedule.communities, fn community ->
+            %{
+              community_name: community.name,
+              location_area_zone: community.location_area_zone,
+              lat: community.lat,
+              long: community.long,
+              gate_photo_file_name: community.gate_photo_file_name,
+              community_id: community.id,
+              date: todate_schedule.date
+            }
+          end)
+
+        json(conn, %{schedule_id: todate_schedule.id, communities: schedule_details})
+    end
   end
 
   def insert_schedules(conn, params) do
@@ -87,7 +101,7 @@ defmodule EcoServiceWeb.PageController do
 
   def insert_schedules(conn, params) do
     date = EcoServiceContext.convert_string_date_to_ecto_date(params["date"])
-    params =  Map.replace(params, "date", date)
+    params = Map.replace(params, "date", date)
 
     community = EcoServiceContext.get_community_by_id(params["community_id"])
 
@@ -95,7 +109,6 @@ defmodule EcoServiceWeb.PageController do
     update_schedule = EcoServiceContext.update_schedule_id_in_community(community, schedule.id)
 
     case update_schedule do
-
       {:ok, _} ->
         conn
         |> put_status(:created)
@@ -108,23 +121,36 @@ defmodule EcoServiceWeb.PageController do
     end
   end
 
-
   def get_schedules_for_todate(conn, _params) do
     todate_schedules = EcoServiceContext.get_schedules_for_date(Date.utc_today()) == []
 
-      case todate_schedules do
-        true ->
-          schedule =
-            Repo.insert!(%Schedule{
-              date: Date.utc_today()
-            })
-          json(conn, schedule.id)
-        false ->
-          todate_schedule = List.first(EcoServiceContext.get_schedules_for_date(Date.utc_today()))
-          schedule_details = Enum.map(todate_schedule.communities, fn community -> %{community_name: community.name, location_area_zone: community.location_area_zone, lat: community.lat, long: community.long, gate_photo_file_name: community.gate_photo_file_name, community_id: community.id, date: todate_schedule.date} end)
+    case todate_schedules do
+      true ->
+        schedule =
+          Repo.insert!(%Schedule{
+            date: Date.utc_today()
+          })
 
-          json(conn, %{schedule_id: todate_schedule.id, communities: schedule_details})
-        end
+        json(conn, schedule.id)
+
+      false ->
+        todate_schedule = List.first(EcoServiceContext.get_schedules_for_date(Date.utc_today()))
+
+        schedule_details =
+          Enum.map(todate_schedule.communities, fn community ->
+            %{
+              community_name: community.name,
+              location_area_zone: community.location_area_zone,
+              lat: community.lat,
+              long: community.long,
+              gate_photo_file_name: community.gate_photo_file_name,
+              community_id: community.id,
+              date: todate_schedule.date
+            }
+          end)
+
+        json(conn, %{schedule_id: todate_schedule.id, communities: schedule_details})
+    end
   end
 
   def insert_schedules(conn, params) do

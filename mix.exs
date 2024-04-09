@@ -51,7 +51,11 @@ defmodule EcoService.MixProject do
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
-      {:nimble_csv, "~> 1.2"}
+      {:nimble_csv, "~> 1.2"},
+      {:ex_aws, "~> 2.1"},
+      {:ex_aws_s3, "~> 2.0"},
+      {:mogrify, "~> 0.9.1"},
+      {:hackney, "~> 1.17"}
     ]
   end
 

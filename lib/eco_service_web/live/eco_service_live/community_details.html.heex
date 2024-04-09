@@ -1,64 +1,113 @@
 <h1 class="font-bold text-2xl text-center pb-10">Community Details</h1>
 
-<.button phx-click="open-maps" phx-value-community-name={@community_detail.name} phx-value-lat={@community_detail.lat}  phx-value-long={@community_detail.long} >Open map</.button>
+<.button
+  phx-click="open-maps"
+  phx-value-community-name={@community_detail.name}
+  phx-value-lat={@community_detail.lat}
+  phx-value-long={@community_detail.long}
+>
+  Open map
+</.button>
+<section class="py-10">
+  <%= if @community_detail.gate_photo_file_name==nil do %>
+    <form id="upload-form" phx-submit="image-upload" phx-change="validate">
+      <.live_file_input upload={@uploads.gate_photo_file_name} />
+      <.button type="submit">Upload</.button>
+    </form>
+    <p class="text-red-600 hover:text-red-900"><%= "Max file size allowed: 8 MB" %></p>
+    <%= for entry <- @uploads.gate_photo_file_name.entries do %>
+      <article class="upload-entry">
+        <figure>
+          <.live_img_preview entry={entry} />
+          <figcaption><%= entry.client_name %></figcaption>
+        </figure>
 
+        <%= for err <- upload_errors(@uploads.gate_photo_file_name, entry) do %>
+          <p class="alert alert-danger"><%= error_to_string(err) %></p>
+        <% end %>
+      </article>
+    <% end %>
+
+    <%= for err <- upload_errors(@uploads.gate_photo_file_name) do %>
+      <p class="alert alert-danger"><%= error_to_string(err) %></p>
+    <% end %>
+  <% else %>
+    <img src={EcoService.EcoServiceContext.get_signed_url(@community_detail.gate_photo_file_name)} />
+    <button phx-click="remove-photo" class="text-red-600 hover:text-red-900">
+      Remove
+    </button>
+  <% end %>
+</section>
 
 <div class="flex justify-between">
-<div>
-  <span class="font-bold pr-4">Name:</span>  <h1 class="text-lg text-left "><%= @community_detail.name %></h1>
-  <span class="font-bold pr-4">Location Area Zone:</span><h1 class=" text-lg text-left "><%= @community_detail.location_area_zone %></h1>
-</div>  
+  <div>
+    <span class="font-bold pr-4">Name:</span>
+    <h1 class="text-lg text-left "><%= @community_detail.name %></h1>
+    <span class="font-bold pr-4">Location Area Zone:</span>
+    <h1 class=" text-lg text-left "><%= @community_detail.location_area_zone %></h1>
+  </div>
   <.link href={~p"/communities/#{@community_id}/add_waste"}>
     <.button>Add Waste</.button>
   </.link>
 </div>
 
 <div class="pt-20">
-  <h1 class="font-bold text-xl text-center pb-12 ">Last one month data</h1> 
-  <canvas id="my-chart" phx-hook="WasteOfACommunity" data-community_waste_bags={@community_waste_bags}></canvas>
-
+  <h1 class="font-bold text-xl text-center pb-12 ">Last one month data</h1>
+  <canvas
+    id="my-chart"
+    phx-hook="WasteOfACommunity"
+    data-community_waste_bags={@community_waste_bags}
+  >
+  </canvas>
 </div>
 
 <h1 class="font-bold text-xl text-center pt-10">Day-Wise waste details</h1>
 
-
-<.table id="waste" rows={@waste_details} >
-  <:col :let={waste_detail} label="Date"> <%=  EcoServiceContext.format_date(waste_detail.date) %>   </:col> 
-  <:col :let={waste_detail} label="No. of Glass Bags"> <%=  waste_detail.glass_bags %>  </:col> 
-  <:col :let={waste_detail} label="No. of Mixed Bags"> <%=  waste_detail.mixed_bags %>  </:col> 
-  <:col :let={waste_detail} label="No. of Paper Bags"> <%=  waste_detail.paper_bags %>  </:col> 
-  <:col :let={waste_detail} label="No. of Plastic Bags"> <%=  waste_detail.plastic_bags %>  </:col> 
-  <:col :let={waste_detail} label="No. of Sanitory Bags"> <%=  waste_detail.sanitory_bags %>  </:col> 
-  <:col :let={waste_detail} label="Seg LF Bags"> <%=  waste_detail.seg_lf_bags %>  </:col> 
-  <:col :let={waste_detail} label="Comments"> <%=  waste_detail.comments %>  </:col> 
+<.table id="waste" rows={@waste_details}>
+  <:col :let={waste_detail} label="Date">
+    <%= EcoServiceContext.format_date(waste_detail.date) %>
+  </:col>
+  <:col :let={waste_detail} label="No. of Glass Bags"><%= waste_detail.glass_bags %></:col>
+  <:col :let={waste_detail} label="No. of Mixed Bags"><%= waste_detail.mixed_bags %></:col>
+  <:col :let={waste_detail} label="No. of Paper Bags"><%= waste_detail.paper_bags %></:col>
+  <:col :let={waste_detail} label="No. of Plastic Bags"><%= waste_detail.plastic_bags %></:col>
+  <:col :let={waste_detail} label="No. of Sanitory Bags"><%= waste_detail.sanitory_bags %></:col>
+  <:col :let={waste_detail} label="Seg LF Bags"><%= waste_detail.seg_lf_bags %></:col>
+  <:col :let={waste_detail} label="Comments"><%= waste_detail.comments %></:col>
 </.table>
 
 <div class="flex flex-cols justify-end gap-6 pt-6">
-  <%= if @offset != 0 do %>  
-  <.button phx-click="first" ><p class="">First</p></.button>
-  <.button phx-click="prev"> <p class="">Prev</p> </.button>
+  <%= if @offset != 0 do %>
+    <.button phx-click="first">
+      <p class="">First</p>
+    </.button>
+    <.button phx-click="prev">
+      <p class="">Prev</p>
+    </.button>
   <% end %>
 
   <%= if @count_of_all_records - @offset > @limit do %>
-  <.button phx-click="next"> <p class="">Next</p></.button>
-  <.button phx-click="last" ><p class="">Last</p></.button>
+    <.button phx-click="next">
+      <p class="">Next</p>
+    </.button>
+    <.button phx-click="last">
+      <p class="">Last</p>
+    </.button>
   <% end %>
 </div>
 
-
 <.modal
- :if={@live_action in [:add_waste]}
- id="add-waste"
- show
- on_cancel={JS.navigate(~p"/communities/#{@community_id}/community_details")}
+  :if={@live_action in [:add_waste]}
+  id="add-waste"
+  show
+  on_cancel={JS.navigate(~p"/communities/#{@community_id}/community_details")}
 >
-  <.live_component 
-   module={EcoServiceWeb.EcoServiceLive.AddWasteComponent}
-   id={:add_waste}
-   live_action={@live_action}
-   page_title={@page_title}
-   community_id={@community_id}
-   navigate={(~p"/communities/#{@community_id}/community_details")}
-  
+  <.live_component
+    module={EcoServiceWeb.EcoServiceLive.AddWasteComponent}
+    id={:add_waste}
+    live_action={@live_action}
+    page_title={@page_title}
+    community_id={@community_id}
+    navigate={~p"/communities/#{@community_id}/community_details"}
   />
 </.modal>
