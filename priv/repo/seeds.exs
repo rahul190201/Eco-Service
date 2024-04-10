@@ -29,29 +29,23 @@ demo_date =
 #   }
 # )
 
-Repo.insert!(
-  %Community{
-    name: "Surrender",
-    location_area_zone: "Surrender ",
-    schedule_id: demo_date.id
-  }
-)
+Repo.insert!(%Community{
+  name: "Surrender",
+  location_area_zone: "Surrender ",
+  schedule_id: demo_date.id
+})
 
-Repo.insert!(
-  %Community{
-    name: "New Creation",
-    location_area_zone: "New Creation ",
-    schedule_id: demo_date.id
-  }
-)
+Repo.insert!(%Community{
+  name: "New Creation",
+  location_area_zone: "New Creation ",
+  schedule_id: demo_date.id
+})
 
-Repo.insert!(
-  %Community{
-    name: "Sacred Grooves",
-    location_area_zone: "Sacred Grooves",
-    schedule_id: demo_date.id
-  }
-)
+Repo.insert!(%Community{
+  name: "Sacred Grooves",
+  location_area_zone: "Sacred Grooves",
+  schedule_id: demo_date.id
+})
 
 # Repo.insert!(
 #   %Community{
