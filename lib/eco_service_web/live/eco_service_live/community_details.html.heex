@@ -88,7 +88,7 @@
     <.button>Add Waste</.button>
   </.link>
 </div>
-<.table id="waste" rows={@waste_details}>
+<.modified_table id="waste" rows={@waste_details}>
   <:col :let={waste_detail} label="Date">
     <%= EcoServiceContext.format_date(waste_detail.date) %>
   </:col>
@@ -99,7 +99,7 @@
   <:col :let={waste_detail} label="No. of Sanitory Bags"><%= waste_detail.sanitory_bags %></:col>
   <:col :let={waste_detail} label="Seg LF Bags"><%= waste_detail.seg_lf_bags %></:col>
   <:col :let={waste_detail} label="Comments"><%= waste_detail.comments %></:col>
-</.table>
+</.modified_table>
 
 <div class="flex flex-cols justify-end gap-6 pt-6">
   <%= if @offset != 0 do %>
