@@ -48,6 +48,25 @@ if config_env() == :prod do
       You can generate one by calling: mix phx.gen.secret
       """
 
+  s3_host =
+    System.fetch_env!("S3_HOST") ||
+      raise """
+      environment variable S3_HOST is missing.
+      On production this is likely to be "assets.auroville.org.in"
+      """
+
+  s3_access_key =
+    System.fetch_env!("S3_ACCESS_KEY") ||
+      raise """
+      environment variable S3_ACCESS_KEY is missing.
+      """
+
+  s3_access_secret =
+    System.fetch_env!("S3_ACCESS_SECRET") ||
+      raise """
+      environment variable S3_ACCESS_SECRET is missing.
+      """
+
   host = System.get_env("PHX_HOST") || "example.com"
   port = String.to_integer(System.get_env("PORT") || "4000")
 
@@ -62,6 +81,13 @@ if config_env() == :prod do
       port: port
     ],
     secret_key_base: secret_key_base
+
+  config :ex_aws, :s3, host: s3_host
+
+  config :ex_aws,
+    debug_requests: true,
+    access_key_id: [s3_access_key, :instance_role],
+    secret_access_key: [s3_access_secret, :instance_role]
 
   # ## SSL Support
   #

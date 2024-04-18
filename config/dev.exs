@@ -77,3 +77,8 @@ config :phoenix, :plug_init_mode, :runtime
 
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
+
+config :ex_aws, :s3, host: "files.auroville.org"
+config :ex_aws, :s3, asset_url: "https://files.auroville.org/ecoservice"
+
+import_config "dev.secret.exs"

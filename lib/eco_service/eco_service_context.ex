@@ -5,6 +5,8 @@ defmodule EcoService.EcoServiceContext do
   alias EcoService.EcoService.Community
   alias EcoService.EcoService.Schedule
 
+  @link_expires_in 60 * 10
+
   def fetch_all_communities(params) do
     Community
     |> limit(^params.limit)
@@ -89,44 +91,49 @@ defmodule EcoService.EcoServiceContext do
   end
 
   def total_glass_bags(wastes) do
-    glass_bags = Enum.map(wastes, fn waste -> waste.glass_bags end)
-    Enum.sum(Enum.reject(glass_bags, fn bag -> bag == nil end))
+    Enum.map(wastes, fn waste -> waste.glass_bags end)
+    |> Enum.reject(fn bag -> is_nil(bag) end)
+    |> Enum.reduce(0, &Decimal.add(&1, &2))
   end
 
   def total_mixed_bags(wastes) do
-    mixed_bags = Enum.map(wastes, fn waste -> waste.mixed_bags end)
-    Enum.sum(Enum.reject(mixed_bags, fn bag -> bag == nil end))
+    Enum.map(wastes, fn waste -> waste.mixed_bags end)
+    |> Enum.reject(fn bag -> bag == nil end)
+    |> Enum.reduce(0, &Decimal.add(&1, &2))
   end
 
   def total_paper_bags(wastes) do
-    paper_bags = Enum.map(wastes, fn waste -> waste.paper_bags end)
-    Enum.sum(Enum.reject(paper_bags, fn bag -> bag == nil end))
+    Enum.map(wastes, fn waste -> waste.paper_bags end)
+    |> Enum.reject(fn bag -> bag == nil end)
+    |> Enum.reduce(0, &Decimal.add(&1, &2))
   end
 
   def total_plastic_bags(wastes) do
-    plastic_bags = Enum.map(wastes, fn waste -> waste.plastic_bags end)
-    Enum.sum(Enum.reject(plastic_bags, fn bag -> bag == nil end))
+    Enum.map(wastes, fn waste -> waste.plastic_bags end)
+    |> Enum.reject(fn bag -> bag == nil end)
+    |> Enum.reduce(0, &Decimal.add(&1, &2))
   end
 
   def total_sanitory_bags(wastes) do
-    sanitory_bags = Enum.map(wastes, fn waste -> waste.sanitory_bags end)
-    Enum.sum(Enum.reject(sanitory_bags, fn bag -> bag == nil end))
+    Enum.map(wastes, fn waste -> waste.sanitory_bags end)
+    |> Enum.reject(fn bag -> bag == nil end)
+    |> Enum.reduce(0, &Decimal.add(&1, &2))
   end
 
   def total_seg_lf_bags(wastes) do
-    seg_lf_bags = Enum.map(wastes, fn waste -> waste.seg_lf_bags end)
-    Enum.sum(Enum.reject(seg_lf_bags, fn bag -> bag == nil end))
+    Enum.map(wastes, fn waste -> waste.seg_lf_bags end)
+    |> Enum.reject(fn bag -> bag == nil end)
+    |> Enum.reduce(0, &Decimal.add(&1, &2))
   end
 
   def top5_comm_details() do
     all_wastes = get_all_waste()
-
     # calculate the sum of all wastes that is produced by a community
     sum_of_all_waste_with_community_id =
       Enum.map(all_wastes, fn waste ->
         %{
           community_id: waste.community.id,
-          waste:
+          wastes:
             [
               waste.glass_bags,
               waste.mixed_bags,
@@ -136,20 +143,43 @@ defmodule EcoService.EcoServiceContext do
               waste.seg_lf_bags
             ]
             |> Enum.reject(fn waste -> waste == nil end)
-            |> Enum.sum()
+            |> Enum.reduce(0, &Decimal.add(&1, &2))
         }
       end)
 
     # Sorting the communities by waste count and taking the top 5
     sum_of_all_waste_with_community_id
-    |> Enum.sort_by(& &1.waste, :desc)
+    |> Enum.sort_by(& &1.wastes, :desc)
     |> Enum.take(5)
+  end
+
+  def top_5_community_and_waste() do
+    top_5_community_details = top5_comm_details()
+
+    group_by_community =
+      Enum.group_by(top_5_community_details, fn detail -> detail.community_id end)
+
+    Enum.map(
+      group_by_community,
+      fn {key, values} ->
+        %{
+          community_id: key,
+          waste:
+            Enum.map(values, fn value -> value.wastes end)
+            |> Enum.reduce(0, &Decimal.add(&1, &2))
+        }
+      end
+    )
   end
 
   # Schedules
 
-  def get_all_schedules() do
-    Schedule
+  def get_schedules_for_date(date) do
+    query =
+      from d in Schedule,
+        where: d.date == ^date
+
+    query
     |> Repo.all()
     |> Repo.preload(:communities)
   end
@@ -159,42 +189,6 @@ defmodule EcoService.EcoServiceContext do
     |> where(id: ^schedule_id)
     |> Repo.all()
     |> Repo.preload(:communities)
-  end
-
-  def monday_schedules() do
-    get_all_schedules()
-    |> Enum.map(fn schedule -> if schedule.day_of_week == "Monday", do: schedule end)
-    |> Enum.reject(fn schedule -> schedule == nil end)
-  end
-
-  def tuesday_schedules() do
-    get_all_schedules()
-    |> Enum.map(fn schedule -> if schedule.day_of_week == "Tuesday", do: schedule end)
-    |> Enum.reject(fn schedule -> schedule == nil end)
-  end
-
-  def wednesday_schedules() do
-    get_all_schedules()
-    |> Enum.map(fn schedule -> if schedule.day_of_week == "Wednesday", do: schedule end)
-    |> Enum.reject(fn schedule -> schedule == nil end)
-  end
-
-  def thursday_schedules() do
-    get_all_schedules()
-    |> Enum.map(fn schedule -> if schedule.day_of_week == "Thursday", do: schedule end)
-    |> Enum.reject(fn schedule -> schedule == nil end)
-  end
-
-  def friday_schedules() do
-    get_all_schedules()
-    |> Enum.map(fn schedule -> if schedule.day_of_week == "Friday", do: schedule end)
-    |> Enum.reject(fn schedule -> schedule == nil end)
-  end
-
-  def saturday_schedules() do
-    get_all_schedules()
-    |> Enum.map(fn schedule -> if schedule.day_of_week == "Saturday", do: schedule end)
-    |> Enum.reject(fn schedule -> schedule == nil end)
   end
 
   def update_schedule_id_in_community(%Community{} = community, params) do
@@ -215,22 +209,29 @@ defmodule EcoService.EcoServiceContext do
     Date.from_iso8601!("#{yyyy}-#{mm}-#{dd}")
   end
 
-  def convert_to_integer(string) do
-    if string != "", do: String.to_integer(string), else: nil
+  # Input: "2024-03-29"
+  # Output: "29-03-3024"
+  def format_string_date(string_date) do
+    [yyyy, mm, dd] = String.split(string_date, "-")
+    "#{dd}-#{mm}-#{yyyy}"
   end
 
-  def find_current_day() do
-    day_number = Date.day_of_week(Date.utc_today())
+  def convert_string_date_to_ecto_date(string_date) do
+    Date.from_iso8601!(string_date)
+  end
 
-    case day_number do
-      1 -> "Monday"
-      2 -> "Tuesday"
-      3 -> "Wednesday"
-      4 -> "Thursday"
-      5 -> "Friday"
-      6 -> "Saturday"
-      7 -> "Sundat"
-    end
+  def convert_string_date_to_calender_iso_date(date) do
+    Calendar.strftime(convert_string_date_to_ecto_date(date), "%a, %B %d %Y")
+  end
+
+  def format_date(date) do
+    string_date = Date.to_string(date)
+    [yyyy, mm, dd] = String.split(string_date, "-")
+    "#{dd}-#{mm}-#{yyyy}"
+  end
+
+  def convert_to_integer(string) do
+    if string != "", do: String.to_integer(string), else: nil
   end
 
   def search_communities(params) do
@@ -241,5 +242,34 @@ defmodule EcoService.EcoServiceContext do
       )
 
     Repo.all(query)
+  end
+
+  def insert_schedule(params) do
+    %Schedule{}
+    |> Schedule.changeset(params)
+    |> Repo.insert!()
+  end
+
+  def get_signed_url(image_url) do
+    config = ExAws.Config.new(:s3, Application.get_all_env(:ex_aws))
+    s3_key = image_url
+    s3_bucket = "ecoservice"
+
+    {:ok, url} =
+      ExAws.S3.presigned_url(config, :get, s3_bucket, s3_key, expires_in: @link_expires_in)
+
+    url
+  end
+
+  def add_gate_photo_file_name(community_detail, image_url) do
+    community_detail
+    |> Ecto.Changeset.change(gate_photo_file_name: image_url)
+    |> Repo.update()
+  end
+
+  def remove_community_gate_photo(community_detail) do
+    community_detail
+    |> Ecto.Changeset.change(gate_photo_file_name: nil)
+    |> Repo.update()
   end
 end

@@ -5,7 +5,7 @@ alias EcoService.EcoService.Community
 alias EcoService.EcoServiceContext
 
 :code.priv_dir(:eco_service)
-|> Path.join("repo/details_of_waste.csv")
+|> Path.join("repo/last_one_month_test_data.csv")
 |> File.read!()
 |> CSV.parse_string()
 |> Enum.each(fn
@@ -28,7 +28,7 @@ alias EcoService.EcoServiceContext
     if (name in community_list) == false do
       Repo.insert!(
       %Community{
-        name: String.trim(name),
+        name: name,
         location_area_zone: location_area_zone
       })
     else

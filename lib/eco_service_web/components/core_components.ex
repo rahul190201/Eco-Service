@@ -332,7 +332,6 @@ defmodule EcoServiceWeb.CoreComponents do
                                    pattern placeholder readonly required rows size step)
   slot :inner_block
 
-
   def modified_input(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
     assigns
     |> assign(field: nil, id: assigns.id || field.id)
@@ -342,6 +341,36 @@ defmodule EcoServiceWeb.CoreComponents do
     |> modified_input()
   end
 
+  attr :id, :any, default: nil
+  attr :name, :any
+  attr :label, :string, default: nil
+  attr :value, :any
+
+  attr :type, :string,
+    default: "text",
+    values: ~w(checkbox color date datetime-local email file hidden month number password
+               range radio search select tel text textarea time url week)
+
+  attr :field, Phoenix.HTML.FormField,
+    doc: "a form field struct retrieved from the form, for example: @form[:email]"
+
+  attr :errors, :list, default: []
+  attr :checked, :boolean, doc: "the checked flag for checkbox inputs"
+  attr :prompt, :string, default: nil, doc: "the prompt for select inputs"
+  attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
+  attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
+  attr :rest, :global, include: ~w(autocomplete cols disabled form max maxlength min minlength
+                                   pattern placeholder readonly required rows size step)
+  slot :inner_block
+
+  def short_input(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
+    assigns
+    |> assign(field: nil, id: assigns.id || field.id)
+    |> assign(:errors, Enum.map(field.errors, &translate_error(&1)))
+    |> assign_new(:name, fn -> if assigns.multiple, do: field.name <> "[]", else: field.name end)
+    |> assign_new(:value, fn -> field.value end)
+    |> short_input()
+  end
 
   def input(%{type: "checkbox", value: value} = assigns) do
     assigns =
@@ -454,6 +483,28 @@ defmodule EcoServiceWeb.CoreComponents do
     """
   end
 
+  def short_input(assigns) do
+    ~H"""
+    <div phx-feedback-for={@name}>
+      <.short_label for={@id}><%= @label %></.short_label>
+      <input
+        type={@type}
+        name={@name}
+        id={@id || @name}
+        value={Phoenix.HTML.Form.normalize_value(@type, @value)}
+        class={[
+          "mt-2 w-4/12 rounded-lg border-zinc-300 py-[7px] px-[11px]",
+          "text-zinc-900 focus:outline-none focus:ring-4 sm:text-sm sm:leading-6",
+          "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400 phx-no-feedback:focus:ring-zinc-800/5",
+          "border-zinc-300 focus:border-zinc-400 focus:ring-zinc-800/5",
+          @errors != [] && "border-rose-400 focus:border-rose-400 focus:ring-rose-400/10"
+        ]}
+        {@rest}
+      />
+      <.error :for={msg <- @errors}><%= msg %></.error>
+    </div>
+    """
+  end
 
   @doc """
   Renders a label.
@@ -463,7 +514,7 @@ defmodule EcoServiceWeb.CoreComponents do
 
   def label(assigns) do
     ~H"""
-    <label for={@for} class="block text-sm font-semibold leading-6 text-zinc-800">
+    <label for={@for} class="pt-4  block text-sm font-semibold leading-6 text-zinc-800">
       <%= render_slot(@inner_block) %>
     </label>
     """
@@ -480,6 +531,16 @@ defmodule EcoServiceWeb.CoreComponents do
     """
   end
 
+  attr :for, :string, default: nil
+  slot :inner_block, required: true
+
+  def short_label(assigns) do
+    ~H"""
+    <label for={@for} class="text-sm font-semibold leading-6 text-zinc-800 pr-6">
+      <%= render_slot(@inner_block) %>
+    </label>
+    """
+  end
 
   @doc """
   Generates a generic error message.
@@ -595,6 +656,73 @@ defmodule EcoServiceWeb.CoreComponents do
     </div>
     """
   end
+
+  attr :id, :string, required: true
+  attr :rows, :list, required: true
+  attr :row_id, :any, default: nil, doc: "the function for generating the row id"
+  attr :row_click, :any, default: nil, doc: "the function for handling phx-click on each row"
+
+  attr :row_item, :any,
+    default: &Function.identity/1,
+    doc: "the function for mapping each row before calling the :col and :action slots"
+
+  slot :col, required: true do
+    attr :label, :string
+  end
+
+  slot :action, doc: "the slot for showing user actions in the last table column"
+
+  def modified_table(assigns) do
+    assigns =
+      with %{rows: %Phoenix.LiveView.LiveStream{}} <- assigns do
+        assign(assigns, row_id: assigns.row_id || fn {id, _item} -> id end)
+      end
+
+    ~H"""
+    <div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
+      <table class="mt-11 w-[40rem] sm:w-full">
+        <thead class="text-left text-[0.9125rem] leading-6 text-black">
+          <tr>
+            <th :for={col <- @col} class="p-0 pb-4 pr-6 font-bold"><%= col[:label] %></th>
+            <th class="relative p-0 pb-4"><span class="sr-only"><%= gettext("Actions") %></span></th>
+          </tr>
+        </thead>
+        <tbody
+          id={@id}
+          phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
+          class="relative divide-y divide-zinc-100 border-t border-zinc-200 text-sm leading-6 text-zinc-700"
+        >
+          <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-zinc-50">
+            <td
+              :for={{col, i} <- Enum.with_index(@col)}
+              phx-click={@row_click && @row_click.(row)}
+              class={["relative p-0", @row_click && "hover:cursor-pointer"]}
+            >
+              <div class="block py-4 pr-6">
+                <span class="absolute -inset-y-px right-0 -left-4 group-hover:bg-zinc-50 sm:rounded-l-xl" />
+                <span class={["relative", i == 0 && "font-semibold text-zinc-500"]}>
+                  <%= render_slot(col, @row_item.(row)) %>
+                </span>
+              </div>
+            </td>
+            <td :if={@action != []} class="relative p-0 w-14">
+              <div class="relative whitespace-nowrap py-4 text-right text-sm font-medium">
+                <span class="absolute -inset-y-px -right-4 left-0 group-hover:bg-zinc-50 sm:rounded-r-xl" />
+                <span
+                  :for={action <- @action}
+                  class="relative ml-4 font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+                >
+                  <%= render_slot(action, @row_item.(row)) %>
+                </span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    """
+  end
+
 
   @doc """
   Renders a data list.

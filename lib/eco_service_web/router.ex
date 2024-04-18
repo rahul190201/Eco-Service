@@ -22,9 +22,8 @@ defmodule EcoServiceWeb.Router do
     live "/communities/:id/edit", EcoServiceLive.CommunityList, :edit
     live "/communities/:id/community_details", EcoServiceLive.CommunityDetails, :community_details
     live "/communities/:id/add_waste", EcoServiceLive.CommunityDetails, :add_waste
-    live "/schedules", EcoServiceLive.Schedule, :index
+    live "/schedules/:schedule_id", EcoServiceLive.Schedule, :index
     live "/schedules/:schedule_id/edit_schedule", EcoServiceLive.Schedule, :edit_schedule
-
   end
 
   # Other scopes may use custom stacks.
@@ -33,8 +32,8 @@ defmodule EcoServiceWeb.Router do
 
     get "/list_of_communities", PageController, :get_all_communities
     post "/add_waste", PageController, :add_waste
-    get "/schedule_details", PageController, :get_schedules_for_a_day
-
+    get "/schedule_details", PageController, :get_schedules_for_todate
+    post "/add_schedules", PageController, :insert_schedules
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
