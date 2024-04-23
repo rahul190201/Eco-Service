@@ -80,5 +80,3 @@ config :swoosh, :api_client, false
 
 config :ex_aws, :s3, host: "files.auroville.org"
 config :ex_aws, :s3, asset_url: "https://files.auroville.org/ecoservice"
-
-import_config "dev.secret.exs"
