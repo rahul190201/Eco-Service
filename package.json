@@ -1,5 +1,8 @@
 {
   "dependencies": {
     "@kurkle/color": "^0.3.2"
+  },
+  "scripts": {
+    "deploy": "cd .. && mix assets.deploy && rm -f _build/esbuild"
   }
 }
